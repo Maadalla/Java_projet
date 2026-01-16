@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<persistence xmlns="http://xmlns.jcp.org/xml/ns/persistence"
+             xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+             xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/persistence
+             http://xmlns.jcp.org/xml/ns/persistence/persistence_2_2.xsd"
+             version="2.2">
+
+    <persistence-unit name="GestionTestsPU" transaction-type="RESOURCE_LOCAL">
+        <provider>org.hibernate.jpa.HibernatePersistenceProvider</provider>
+        
+        <!-- Entités JPA -->
+        <class>com.sqli.gestiontests.entities.Candidat</class>
+        <class>com.sqli.gestiontests.entities.Creneau</class>
+        <class>com.sqli.gestiontests.entities.Theme</class>
+        <class>com.sqli.gestiontests.entities.Question</class>
+        <class>com.sqli.gestiontests.entities.Reponse</class>
+        <class>com.sqli.gestiontests.entities.Test</class>
+        <class>com.sqli.gestiontests.entities.ReponseCandidat</class>
+        <class>com.sqli.gestiontests.entities.Resultat</class>
+        <class>com.sqli.gestiontests.entities.Administrateur</class>
+        <class>com.sqli.gestiontests.entities.Configuration</class>
+        
+        <properties>
+            <!-- Configuration MySQL Database -->
+            <property name="javax.persistence.jdbc.driver" value="com.mysql.cj.jdbc.Driver"/>
+            <property name="javax.persistence.jdbc.url" value="jdbc:mysql://localhost:3306/gestion_tests?createDatabaseIfNotExist=true&amp;useSSL=false&amp;serverTimezone=UTC"/>
+            <property name="javax.persistence.jdbc.user" value="root"/>
+            <property name="javax.persistence.jdbc.password" value=""/>
+            
+            <!-- Configuration Hibernate -->
+            <property name="hibernate.dialect" value="org.hibernate.dialect.MySQL8Dialect"/>
+            <property name="hibernate.hbm2ddl.auto" value="update"/>
+            <property name="hibernate.show_sql" value="true"/>
+            <property name="hibernate.format_sql" value="true"/>
+            <property name="hibernate.use_sql_comments" value="true"/>
+            
+            <!-- Pool de connexions -->
+            <property name="hibernate.connection.pool_size" value="10"/>
+            
+            <!-- Configuration H2 (désactivée) -->
+            <!--
+            <property name="javax.persistence.jdbc.driver" value="org.h2.Driver"/>
+            <property name="javax.persistence.jdbc.url" value="jdbc:mysql://localhost:3306/gestion_tests?createDatabaseIfNotExist=true&amp;useSSL=false&amp;serverTimezone=UTC"/>
+            <property name="javax.persistence.jdbc.user" value="root"/>
+            <property name="javax.persistence.jdbc.password" value=""/>
+            <property name="hibernate.dialect" value="org.hibernate.dialect.MySQL8Dialect"/>
+            -->
+        </properties>
+    </persistence-unit>
+</persistence>

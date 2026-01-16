@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:h="http://xmlns.jcp.org/jsf/html" xmlns:p="http://primefaces.org/ui"
+    xmlns:f="http://xmlns.jcp.org/jsf/core">
+<h:head>
+    <title>ISGA | Tableau de Bord</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <h:outputStylesheet library="css" name="styles.css" />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&amp;display=swap" rel="stylesheet" />
+</h:head>
+<h:body>
+    <f:metadata>
+        <f:event type="preRenderView" listener="#{adminBean.chargerCandidatsEnAttente}" />
+    </f:metadata>
+
+    <div class="admin-layout">
+        <!-- Sidebar -->
+        <div class="admin-sidebar">
+            <div class="admin-logo">
+                <div style="font-size: 2rem; margin-bottom: 0.5rem;">🚀</div>
+                <h2>ISGA</h2>
+                <span style="opacity: 0.6; font-size: 0.8rem; letter-spacing: 1px;">MANAGEMENT</span>
+            </div>
+
+            <h:form>
+                <p:menu style="width: 100%; border: none; background: transparent;">
+                    <p:menuitem value="Vue d'ensemble" icon="pi pi-th-large" outcome="dashboard"
+                        styleClass="active-menu-item" />
+                    <p:menuitem value="Banque de Questions" icon="pi pi-database" outcome="gestion-questions" />
+                    <p:menuitem value="Planning &amp; Créneaux" icon="pi pi-calendar" outcome="gestion-creneaux" />
+                    <p:menuitem value="Résultats &amp; Stats" icon="pi pi-chart-bar" outcome="recherche-resultats" />
+
+
+                    <p:separator style="background: rgba(255,255,255,0.1); margin: 1rem 0;" />
+
+                    <p:menuitem value="Déconnexion" icon="pi pi-power-off" action="#{adminBean.seDeconnecter}"
+                        style="color: #fda4af !important;" />
+                </p:menu>
+            </h:form>
+
+            <div
+                style="margin-top: auto; padding: 1rem; background: rgba(0,0,0,0.2); border-radius: 12px; margin-bottom: 1rem;">
+                <div style="display: flex; align-items: center;">
+                    <div
+                        style="width: 35px; height: 35px; background: var(--accent); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin-right: 10px;">
+                        <span style="font-weight: bold;">A</span>
+                    </div>
+                    <div>
+                        <div style="font-weight: 600; font-size: 0.9rem;">#{adminBean.adminConnecte.login}</div>
+                        <div style="font-size: 0.75rem; opacity: 0.7;">Administrateur</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Main Content -->
+        <div class="admin-content">
+            <h:form id="dashboardForm" class="animate-entry">
+                <div class="page-header">
+                    <div>
+                        <h1 class="page-title">Tableau de Bord</h1>
+                        <p style="color: var(--text-muted);">Bienvenue, voici ce qui se passe aujourd'hui.</p>
+                    </div>
+                    <div>
+                        <p:commandButton value="Actualiser" icon="pi pi-refresh"
+                            action="#{adminBean.chargerCandidatsEnAttente}" update="@form"
+                            styleClass="ui-button-outlined" />
+                    </div>
+                </div>
+
+                <p:messages showDetail="true" closable="true" />
+
+                <!-- KPI Cards -->
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div style="display: flex; justify-content: space-between; align-items: flex-start;">
+                            <div>
+                                <div class="stat-value">#{adminBean.candidatsEnAttente.size()}</div>
+                                <div class="stat-label">Candidats en Attente</div>
+                            </div>
+                            <div style="background: #e0f2fe; padding: 10px; border-radius: 8px;">
+                                <i class="pi pi-users" style="color: var(--accent); font-size: 1.5rem;"></i>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="stat-card">
+                        <div style="display: flex; justify-content: space-between; align-items: flex-start;">
+                            <div>
+                                <div class="stat-value">#{testBean.questions.size() > 0 ? testBean.questions.size() :
+                                    '0'}</div>
+                                <div class="stat-label">Tests Terminés</div>
+                            </div>
+                            <div style="background: #dcfce7; padding: 10px; border-radius: 8px;">
+                                <i class="pi pi-check-circle" style="color: var(--success); font-size: 1.5rem;"></i>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Placeholder Stats -->
+                    <div class="stat-card">
+                        <div style="display: flex; justify-content: space-between; align-items: flex-start;">
+                            <div>
+                                <div class="stat-value">98%</div>
+                                <div class="stat-label">Taux de Disponibilité</div>
+                            </div>
+                            <div style="background: #f3e8ff; padding: 10px; border-radius: 8px;">
+                                <i class="pi pi-server" style="color: #9333ea; font-size: 1.5rem;"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Main Action Table -->
+                <div style="background: white; padding: 2rem; border-radius: 16px; box-shadow: var(--shadow-soft);">
+                    <div
+                        style="margin-bottom: 1.5rem; display: flex; justify-content: space-between; align-items: center;">
+                        <h3 style="margin: 0; color: var(--primary);">Demandes d'inscription récentes</h3>
+                        <p:button value="Voir tout" styleClass="ui-button-text" />
+                    </div>
+
+                    <p:dataTable value="#{adminBean.candidatsEnAttente}" var="candidat"
+                        emptyMessage="Aucune demande en attente. Tout est calme ! ☕" styleClass="premium-table">
+
+                        <p:column headerText="Candidat">
+                            <div style="font-weight: 600;">#{candidat.nom} #{candidat.prenom}</div>
+                            <div style="font-size: 0.85rem; color: var(--text-muted);">Code: #{candidat.code}</div>
+                        </p:column>
+
+                        <p:column headerText="Infos">
+                            <div><i class="pi pi-envelope" style="margin-right: 5px; opacity: 0.5;"></i>
+                                #{candidat.email}</div>
+                            <div><i class="pi pi-building" style="margin-right: 5px; opacity: 0.5;"></i>
+                                #{candidat.ecole}</div>
+                        </p:column>
+
+                        <p:column headerText="Actions" style="text-align: right;">
+                            <p:commandButton value="Valider l'accès" icon="pi pi-check"
+                                action="#{adminBean.validerCandidat(candidat)}" update="@form"
+                                styleClass="p-button-success p-button-rounded" style="margin-right: 10px;" />
+
+                            <p:commandButton icon="pi pi-times"
+                                styleClass="p-button-danger p-button-rounded p-button-text" title="Refuser" />
+                        </p:column>
+                    </p:dataTable>
+                </div>
+
+            </h:form>
+        </div>
+    </div>
+</h:body>
+
+</html>

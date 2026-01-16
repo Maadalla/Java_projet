@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:h="http://xmlns.jcp.org/jsf/html" xmlns:p="http://primefaces.org/ui">
+<h:head>
+    <title>ISGA | Admin Access</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <h:outputStylesheet library="css" name="styles.css" />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&amp;display=swap" rel="stylesheet" />
+</h:head>
+<h:body>
+    <div class="full-screen-center">
+
+        <div class="login-card glass-panel" style="max-width: 450px;">
+
+            <div class="login-header">
+                <div
+                    style="width: 70px; height: 70px; background: var(--primary); border-radius: 20px; display: flex; align-items: center; justify-content: center; margin: 0 auto 1.5rem auto; box-shadow: var(--shadow-strong);">
+                    <i class="pi pi-cog" style="font-size: 2rem; color: white;"></i>
+                </div>
+                <h2>Administration</h2>
+                <p>Accès réservé au personnel autorisé</p>
+            </div>
+
+            <h:form id="loginForm">
+                <p:messages id="messages" showDetail="false" closable="true" style="margin-bottom: 20px" />
+
+                <div class="p-field" style="margin-bottom: 1.5rem;">
+                    <span class="ui-float-label">
+                        <p:inputText id="login" value="#{adminBean.login}" required="true" styleClass="input-lg"
+                            style="text-align: left; padding-left: 1.5rem;" />
+                        <p:outputLabel for="login" value="Identifiant" style="left: 1rem;" />
+                    </span>
+                </div>
+
+                <div class="p-field" style="margin-bottom: 2rem;">
+                    <span class="ui-float-label">
+                        <p:password id="password" value="#{adminBean.password}" required="true" feedback="false"
+                            styleClass="input-lg" style="text-align: left; padding-left: 1.5rem;" />
+                        <p:outputLabel for="password" value="Mot de passe" style="left: 1rem;" />
+                    </span>
+                </div>
+
+                <p:commandButton value="Connexion Sécurisée" action="#{adminBean.seConnecter}" update="loginForm"
+                    icon="pi pi-lock" styleClass="btn-primary-lg" />
+            </h:form>
+
+            <div style="text-align: center; margin-top: 2rem;">
+                <p:button value="Retour à l'accueil" outcome="/index"
+                    styleClass="ui-button-outlined ui-button-secondary" style="width: 100%; color: #333;" />
+            </div>
+        </div>
+    </div>
+</h:body>
+
+</html>

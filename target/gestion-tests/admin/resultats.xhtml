@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:h="http://xmlns.jcp.org/jsf/html" xmlns:p="http://primefaces.org/ui">
+<h:head>
+    <title>Résultats - Admin</title>
+    <h:outputStylesheet library="css" name="styles.css" />
+</h:head>
+<h:body>
+    <div class="container">
+        <div class="header">
+            <h1>Résultats des Tests</h1>
+        </div>
+
+        <h:form>
+            <p:panel header="Liste des Résultats">
+                <p:dataTable value="#{adminBean.resultats}" var="resultat">
+                    <p:column headerText="Candidat">
+                        <h:outputText value="#{resultat.test.candidat.nom} #{resultat.test.candidat.prenom}" />
+                    </p:column>
+                    <p:column headerText="Date">
+                        <h:outputText value="#{resultat.test.dateDebut}">
+                            <f:convertDateTime pattern="dd/MM/yyyy HH:mm" />
+                        </h:outputText>
+                    </p:column>
+                    <p:column headerText="Score">
+                        <h:outputText value="#{resultat.score} / #{resultat.totalQuestions}" />
+                    </p:column>
+                    <p:column headerText="Note /20">
+                        <h:outputText value="#{resultat.note}" />
+                    </p:column>
+                    <p:column headerText="Mention">
+                        <h:outputText value="#{resultat.mention}" />
+                    </p:column>
+                </p:dataTable>
+
+                <div class="button-group" style="margin-top: 20px;">
+                    <p:button value="Retour au Dashboard" icon="pi pi-arrow-left" outcome="dashboard"
+                        styleClass="p-button-secondary" />
+                </div>
+            </p:panel>
+        </h:form>
+    </div>
+</h:body>
+
+</html>

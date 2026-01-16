@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:h="http://xmlns.jcp.org/jsf/html" xmlns:p="http://primefaces.org/ui"
+    xmlns:f="http://xmlns.jcp.org/jsf/core">
+<h:head>
+    <title>ISGA | Nouvelle Inscription</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <h:outputStylesheet library="css" name="styles.css" />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&amp;display=swap" rel="stylesheet" />
+</h:head>
+<h:body>
+    <div class="full-screen-center animate-entry">
+
+        <div class="form-card glass-panel" style="width: 100%; max-width: 700px; padding: 3rem;">
+
+            <div class="form-header">
+                <div style="font-size: 3rem; margin-bottom: 1rem;">📝</div>
+                <h1>Candidature au Test</h1>
+                <p style="color: var(--text-muted);">Remplissez ce formulaire pour obtenir votre code d'accès personnel.
+                </p>
+            </div>
+
+            <h:form id="inscriptionForm">
+                <p:messages id="messages" showDetail="true" closable="true" style="margin-bottom: 2rem" />
+
+                <div class="ui-fluid p-formgrid p-grid"
+                    style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem;">
+
+                    <div class="p-field">
+                        <span class="ui-float-label">
+                            <p:inputText id="nom" value="#{inscriptionBean.candidat.nom}" required="true"
+                                styleClass="input-lg" style="text-align: left; padding-left: 1.2rem;" />
+                            <p:outputLabel for="nom" value="Nom *" />
+                        </span>
+                    </div>
+
+                    <div class="p-field">
+                        <span class="ui-float-label">
+                            <p:inputText id="prenom" value="#{inscriptionBean.candidat.prenom}" required="true"
+                                styleClass="input-lg" style="text-align: left; padding-left: 1.2rem;" />
+                            <p:outputLabel for="prenom" value="Prénom *" />
+                        </span>
+                    </div>
+
+                    <div class="p-field" style="grid-column: span 2;">
+                        <span class="ui-float-label">
+                            <p:inputText id="email" value="#{inscriptionBean.candidat.email}" required="true"
+                                styleClass="input-lg" style="text-align: left; padding-left: 1.2rem;">
+                                <f:validateRegex pattern="^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$" />
+                            </p:inputText>
+                            <p:outputLabel for="email" value="Email (Pro ou Perso) *" />
+                        </span>
+                    </div>
+
+                    <div class="p-field">
+                        <span class="ui-float-label">
+                            <p:inputText id="gsm" value="#{inscriptionBean.candidat.gsm}" required="true"
+                                styleClass="input-lg" style="text-align: left; padding-left: 1.2rem;">
+                                <f:validateRegex pattern="^[0-9]{10}$" />
+                            </p:inputText>
+                            <p:outputLabel for="gsm" value="Mobile (06...)" />
+                        </span>
+                    </div>
+
+                    <div class="p-field">
+                        <span class="ui-float-label">
+                            <p:inputText id="ecole" value="#{inscriptionBean.candidat.ecole}" required="true"
+                                styleClass="input-lg" style="text-align: left; padding-left: 1.2rem;" />
+                            <p:outputLabel for="ecole" value="École / Entreprise *" />
+                        </span>
+                    </div>
+                </div>
+
+                <div class="p-field" style="margin-top: 1.5rem;">
+                    <p:outputLabel for="creneau" value="Choisissez votre session :"
+                        style="font-weight: 600; color: var(--text-muted); display: block; margin-bottom: 0.5rem;" />
+                    <p:selectOneMenu id="creneau" value="#{inscriptionBean.creneauSelectionne}" required="true"
+                        style="width: 100%; border-radius: 12px; height: 50px; display: flex; align-items: center;">
+                        <f:selectItem itemLabel="-- Sélectionner un créneau disponible --" itemValue="#{null}" />
+                        <f:selectItems value="#{inscriptionBean.creneauxDisponibles}" var="creneau"
+                            itemValue="#{creneau.id}"
+                            itemLabel="#{creneau.date} : #{creneau.heureDebut} - #{creneau.heureFin}" />
+                    </p:selectOneMenu>
+                </div>
+
+                <div style="margin-top: 3rem; display: flex; gap: 1rem;">
+                    <p:button value="Annuler" outcome="index" icon="pi pi-arrow-left" styleClass="ui-button-flat"
+                        style="flex: 1; height: 55px; border-radius: 12px; color: var(--text-muted);" />
+
+                    <p:commandButton value="Valider l'inscription" action="#{inscriptionBean.inscrire}"
+                        update="inscriptionForm" icon="pi pi-check" styleClass="btn-primary-lg"
+                        style="flex: 2; height: 55px;" />
+                </div>
+
+            </h:form>
+        </div>
+    </div>
+</h:body>
+
+</html>

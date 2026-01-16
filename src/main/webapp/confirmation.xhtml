@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:h="http://xmlns.jcp.org/jsf/html" xmlns:p="http://primefaces.org/ui"
+    xmlns:f="http://xmlns.jcp.org/jsf/core">
+<h:head>
+    <title>Confirmation - Gestion de Tests</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <h:outputStylesheet library="css" name="styles.css" />
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&amp;display=swap"
+        rel="stylesheet" />
+    <style>
+        .conf-card {
+            max-width: 600px;
+            margin: 4rem auto;
+            text-align: center;
+        }
+
+        .code-box {
+            background: rgba(var(--primary-rgb), 0.05);
+            border: 2px dashed var(--primary);
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin: 2rem 0;
+            position: relative;
+        }
+
+        .code-val {
+            font-family: 'Courier New', monospace;
+            font-size: 2.5rem;
+            font-weight: 800;
+            color: var(--primary);
+            letter-spacing: 2px;
+        }
+
+        .dt-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 0.8rem 0;
+            border-bottom: 1px solid #f1f5f9;
+        }
+
+        .dt-item:last-child {
+            border-bottom: none;
+        }
+
+        .dt-label {
+            color: var(--text-muted);
+            font-weight: 500;
+        }
+
+        .dt-value {
+            font-weight: 600;
+            color: var(--text-main);
+        }
+    </style>
+</h:head>
+<h:body style="background: var(--background);">
+
+    <div class="container animate-entry">
+
+        <div class="glass-panel conf-card">
+
+            <div style="margin-bottom: 2rem;">
+                <div
+                    style="width: 80px; height: 80px; background: #dcfce7; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 1.5rem auto;">
+                    <i class="pi pi-check" style="font-size: 3rem; color: #16a34a;"></i>
+                </div>
+                <h1 style="color: var(--text-main); margin-bottom: 0.5rem; font-weight: 800;">Inscription Réussie !</h1>
+                <p style="color: var(--text-muted); font-size: 1.1rem;">Bienvenue à bord, <span
+                        style="color: var(--primary); font-weight: 600;">#{inscriptionBean.candidat.prenom}</span>.</p>
+            </div>
+
+            <div class="code-box">
+                <div
+                    style="color: var(--text-muted); font-size: 0.9rem; margin-bottom: 0.5rem; text-transform: uppercase; letter-spacing: 1px; font-weight: 700;">
+                    Votre Code Personnel</div>
+                <div class="code-val">#{inscriptionBean.candidat.code}</div>
+                <div style="margin-top: 0.5rem; font-size: 0.85rem; color: var(--text-muted);">
+                    <i class="pi pi-info-circle" style="font-size: 0.8rem;"></i> Conservez ce code pour démarrer
+                    l'examen.
+                </div>
+            </div>
+
+            <div
+                style="text-align: left; background: white; border-radius: 12px; padding: 1.5rem; margin-bottom: 2rem; box-shadow: var(--shadow-soft);">
+                <div class="dt-item">
+                    <span class="dt-label">École</span>
+                    <span class="dt-value">#{inscriptionBean.candidat.ecole}</span>
+                </div>
+                <div class="dt-item">
+                    <span class="dt-label">Email</span>
+                    <span class="dt-value">#{inscriptionBean.candidat.email}</span>
+                </div>
+                <div class="dt-item">
+                    <span class="dt-label">Session</span>
+                    <span class="dt-value">
+                        <h:outputText value="#{inscriptionBean.candidat.creneau.date}">
+                            <f:convertDateTime type="localDate" pattern="dd MMM yyyy" locale="fr" />
+                        </h:outputText>
+                        à #{inscriptionBean.candidat.creneau.heureDebut}
+                    </span>
+                </div>
+            </div>
+
+            <div style="display: flex; gap: 1rem; flex-direction: column;">
+                <p:button value="Accéder à l'Examen" icon="pi pi-bolt" outcome="index" styleClass="btn-primary-lg"
+                    style="width: 100%; justify-content: center;" />
+
+                <p:button value="Retourner à l'accueil" icon="pi pi-arrow-left" outcome="index"
+                    styleClass="ui-button-outlined" style="width: 100%;" />
+            </div>
+
+            <div style="margin-top: 2rem; font-size: 0.85rem; color: var(--text-muted);">
+                Un email de confirmation a été envoyé à #{inscriptionBean.candidat.email}.
+            </div>
+
+        </div>
+
+    </div>
+
+</h:body>
+
+</html>
