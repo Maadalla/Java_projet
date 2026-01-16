@@ -88,5 +88,6 @@ Une fois que vous voyez `Deployed 1/1` dans la console, l'application est prête
 ---
 
 ## 📝 Auteur
-Projet réalisé dans le cadre du module Java EE.
+Mohamed Maadalla
+Driss Bouajaja
 **ISGA Management** v1.0
