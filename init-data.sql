@@ -3,7 +3,111 @@
 -- Base de données de test complète
 -- ============================================
 
+CREATE DATABASE IF NOT EXISTS gestion_tests;
 USE gestion_tests;
+
+-- ============================================
+-- 0. SCHEMA : CREATION DES TABLES
+-- ============================================
+
+DROP TABLE IF EXISTS reponses_candidats;
+DROP TABLE IF EXISTS resultats;
+DROP TABLE IF EXISTS reponses;
+DROP TABLE IF EXISTS questions;
+DROP TABLE IF EXISTS themes;
+DROP TABLE IF EXISTS candidats;
+DROP TABLE IF EXISTS tests;
+DROP TABLE IF EXISTS creneaux;
+DROP TABLE IF EXISTS administrateurs;
+DROP TABLE IF EXISTS configuration;
+
+CREATE TABLE administrateurs (
+    id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    actif BOOLEAN NOT NULL DEFAULT TRUE,
+    email VARCHAR(255),
+    login VARCHAR(255),
+    password VARCHAR(255)
+);
+
+CREATE TABLE themes (
+    id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    nom VARCHAR(255),
+    description VARCHAR(255),
+    actif BOOLEAN NOT NULL DEFAULT TRUE
+);
+
+CREATE TABLE questions (
+    id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    texte LONGTEXT,
+    type VARCHAR(20) DEFAULT 'CHOIX_UNIQUE',
+    actif BOOLEAN NOT NULL DEFAULT TRUE,
+    theme_id BIGINT,
+    FOREIGN KEY (theme_id) REFERENCES themes(id)
+);
+
+CREATE TABLE reponses (
+    id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    texte LONGTEXT,
+    correcte BOOLEAN NOT NULL,
+    question_id BIGINT,
+    FOREIGN KEY (question_id) REFERENCES questions(id)
+);
+
+CREATE TABLE creneaux (
+    id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    date DATE,
+    heure_debut TIME,
+    heure_fin TIME,
+    capacite_max INT,
+    duree_examen INT,
+    actif BOOLEAN NOT NULL DEFAULT TRUE
+);
+
+CREATE TABLE tests (
+    id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    code VARCHAR(255),
+    creneau_id BIGINT,
+    FOREIGN KEY (creneau_id) REFERENCES creneaux(id)
+);
+
+CREATE TABLE candidats (
+    id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    nom VARCHAR(255),
+    prenom VARCHAR(255),
+    email VARCHAR(255),
+    gsm VARCHAR(255),
+    ecole VARCHAR(255),
+    filiere VARCHAR(255),
+    code VARCHAR(50) UNIQUE,
+    statut VARCHAR(20),
+    creneau_id BIGINT,
+    FOREIGN KEY (creneau_id) REFERENCES creneaux(id)
+);
+
+CREATE TABLE resultats (
+    id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    note DOUBLE,
+    nb_questions INT,
+    nb_correctes INT,
+    candidat_id BIGINT,
+    FOREIGN KEY (candidat_id) REFERENCES candidats(id)
+);
+
+CREATE TABLE reponses_candidats (
+    id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    candidat_id BIGINT,
+    question_id BIGINT,
+    reponse_id BIGINT,
+    FOREIGN KEY (candidat_id) REFERENCES candidats(id),
+    FOREIGN KEY (question_id) REFERENCES questions(id),
+    FOREIGN KEY (reponse_id) REFERENCES reponses(id)
+);
+
+CREATE TABLE configuration (
+    id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    cle VARCHAR(255),
+    valeur VARCHAR(255)
+);
 
 -- Nettoyage des données existantes (dans l'ordre des dépendances)
 SET FOREIGN_KEY_CHECKS = 0;

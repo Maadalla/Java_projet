@@ -23,6 +23,15 @@
             <h:form id="loginForm">
                 <p:messages id="messages" showDetail="false" closable="true" style="margin-bottom: 20px" />
 
+                <!-- DEMO MODE: Professor Access Hint -->
+                <div
+                    style="background: rgba(var(--primary-rgb), 0.1); border: 1px solid var(--primary); padding: 10px; border-radius: 8px; margin-bottom: 20px; text-align: center;">
+                    <i class="pi pi-info-circle" style="color: var(--primary); margin-right: 5px;"></i>
+                    <span style="color: var(--text-color); font-size: 0.9rem;">Mode Démo Enseignant :</span><br />
+                    <strong style="color: var(--primary);">Login : admin</strong> | <strong
+                        style="color: var(--primary);">Pass : admin123</strong>
+                </div>
+
                 <div class="p-field" style="margin-bottom: 1.5rem;">
                     <span class="ui-float-label">
                         <p:inputText id="login" value="#{adminBean.login}" required="true" styleClass="input-lg"

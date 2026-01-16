@@ -142,6 +142,18 @@ public class TestBean implements Serializable {
     }
 
     /**
+     * Naviguer directement vers une question spécifique
+     * 
+     * @param index L'index de la question (0-based)
+     */
+    public void allerAQuestion(int index) {
+        if (index >= 0 && index < questions.size()) {
+            enregistrerReponseActuelle();
+            indexQuestionCourante = index;
+        }
+    }
+
+    /**
      * Enregistre la réponse de la question courante
      */
     private void enregistrerReponseActuelle() {

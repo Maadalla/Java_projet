@@ -1,54 +1,94 @@
 @echo off
-echo ==========================================
-echo INITIALISATION DES DONNEES DE TEST
-echo SQLI - E-Challenge Platform
-echo ==========================================
+setlocal
+echo ===========================================
+echo   INITIALISATION BASE DE DONNEES (Diag)
+echo             ISGA MANAGEMENT
+echo ===========================================
 echo.
 
-echo Verification de MySQL...
-mysql --version >nul 2>&1
-if errorlevel 1 (
-    echo ERREUR: MySQL n'est pas dans le PATH
-    echo Verifiez que XAMPP est demarre et que MySQL est accessible
-    pause
-    exit /b 1
+REM --- ETAPE 1 : TROUVER MYSQL ---
+set MYSQL_CMD=
+
+REM Test 1 : PATH systeme
+where mysql >nul 2>&1
+if %ERRORLEVEL% EQU 0 (
+    echo [INFO] MySQL trouve dans le PATH systeme.
+    set MYSQL_CMD=mysql
+    goto FOUND
 )
 
-echo.
-echo Importation des donnees de test...
-echo.
+REM Test 2 : C:\xampp
+if exist "C:\xampp\mysql\bin\mysql.exe" (
+    echo [INFO] MySQL trouve dans C:\xampp
+    set MYSQL_CMD="C:\xampp\mysql\bin\mysql.exe"
+    goto FOUND
+)
 
-mysql -u root -p gestion_tests < init-data.sql
+REM Test 3 : D:\xampp (au cas ou)
+if exist "D:\xampp\mysql\bin\mysql.exe" (
+    echo [INFO] MySQL trouve dans D:\xampp
+    set MYSQL_CMD="D:\xampp\mysql\bin\mysql.exe"
+    goto FOUND
+)
 
-if errorlevel 1 (
-    echo.
-    echo ERREUR lors de l'importation!
-    echo Verifiez que:
-    echo - XAMPP est demarre
-    echo - MySQL fonctionne
-    echo - La base 'gestion_tests' existe
+REM Test 4 : WAMP
+if exist "C:\wamp64\bin\mysql\mysql8.0.33\bin\mysql.exe" (
+    echo [INFO] MySQL trouve dans WAMP
+    set MYSQL_CMD="C:\wamp64\bin\mysql\mysql8.0.33\bin\mysql.exe"
+    goto FOUND
+)
+
+:NOT_FOUND
+echo [ERREUR] Impossible de trouver mysql.exe !
+echo.
+echo Veuillez entrer le chemin complet vers le dossier bin de mysql
+echo Exemple: C:\Program Files\MySQL\MySQL Server 8.0\bin
+set /p USER_PATH="Chemin : "
+if exist "%USER_PATH%\mysql.exe" (
+    set MYSQL_CMD="%USER_PATH%\mysql.exe"
+    goto FOUND
+) else (
+    echo Chemin invalide. Abandon.
     pause
-    exit /b 1
+    exit /b
+)
+
+:FOUND
+echo [OK] Utilisation de : %MYSQL_CMD%
+echo.
+
+REM --- ETAPE 2 : TEST DE CONNEXION ---
+echo [TEST] Tentative de connexion a MySQL...
+%MYSQL_CMD% -u root -e "SELECT @@version;" 
+if %ERRORLEVEL% NEQ 0 (
+    echo.
+    echo [ERREUR] Echec de connexion a MySQL.
+    echo Cause possible : XAMPP n'est pas lance ou mot de passe root non vide.
+    echo.
+    pause
+    exit /b
+)
+echo [OK] Connexion reussie.
+echo.
+
+REM --- ETAPE 3 : EXECUTION ---
+echo [ACTION] Importation de init-data.sql...
+%MYSQL_CMD% -u root < init-data.sql
+
+if %ERRORLEVEL% EQU 0 (
+    echo.
+    echo ===========================================
+    echo [SUCCES] Base de donnees initialisee !
+    echo ===========================================
 ) else (
     echo.
-    echo ==========================================
-    echo SUCCES! Donnees importees
-    echo ==========================================
+    echo [ERREUR] Une erreur est survenue lors de l'import.
     echo.
-    echo BASE DE DONNEES INITIALISEE:
-    echo - Administrateur: admin / admin123
-    echo - 4 Themes
-    echo - 16 Questions avec reponses
-    echo - 7 Creneaux
-    echo - 1 Candidat de test
-    echo.
-    echo CODE DE TEST: TEST-2025
-    echo.
-    echo Vous pouvez maintenant:
-    echo 1. Demarrer l'application: start.bat
-    echo 2. Tester avec le code: TEST-2025
-    echo 3. Admin: admin / admin123
-    echo.
+    echo *** ACTION REQUISE ***
+    echo Si l'erreur est "Table doesnt exist":
+    echo 1. Lancez d'abord start.bat UNE FOIS (pour creer les tables).
+    echo 2. Attendez que l'application demarre.
+    echo 3. Revenez ici et relancez ce script.
 )
 
 pause

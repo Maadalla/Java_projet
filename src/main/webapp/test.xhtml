@@ -99,10 +99,11 @@
 
                 <div class="question-grid">
                     <ui:repeat value="#{testBean.questions}" var="q" varStatus="status">
-                        <div
-                            class="q-badge #{status.index == testBean.indexQuestionCourante ? 'active' : ''} #{testBean.reponsesSelectionnees[q.id] != null ? 'answered' : ''}">
+                        <p:commandLink action="#{testBean.allerAQuestion(status.index)}" update="@form"
+                            styleClass="q-badge #{status.index == testBean.indexQuestionCourante ? 'active' : ''} #{testBean.reponsesSelectionnees[q.id] != null ? 'answered' : ''}"
+                            style="text-decoration: none; display: flex; align-items: center; justify-content: center; cursor: pointer;">
                             #{status.index + 1}
-                        </div>
+                        </p:commandLink>
                     </ui:repeat>
                 </div>
 
