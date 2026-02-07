@@ -90,4 +90,6 @@ Une fois que vous voyez `Deployed 1/1` dans la console, l'application est prête
 ## 📝 Auteur
 Mohamed Maadalla
 Driss Bouajaja
+Nada Zirari
+Douaa Hasnaoui
 **ISGA Management** v1.0
