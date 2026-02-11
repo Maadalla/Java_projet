@@ -1,0 +1,204 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:h="http://xmlns.jcp.org/jsf/html"
+    xmlns:f="http://xmlns.jcp.org/jsf/core" xmlns:p="http://primefaces.org/ui"
+    xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
+
+<h:head>
+    <title>Examen en cours | Gestion Tests</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <!-- Fonts -->
+    <link
+        href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&amp;family=Inter:wght@300;400;500;600&amp;display=swap"
+        rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+
+    <!-- Styles -->
+    <h:outputStylesheet name="css/styles.css" />
+
+    <style>
+        /* Specific overrides for JSF generated tables in radios */
+        .answers-list table {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0 1rem;
+        }
+
+        .answers-list td {
+            display: block;
+            padding: 0;
+            margin-bottom: 0.5rem;
+        }
+
+        .answers-list label {
+            display: flex;
+            align-items: center;
+            padding: 1.5rem;
+            background: rgba(255, 255, 255, 0.6);
+            border: 2px solid #f1f5f9;
+            border-radius: 16px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            width: 100%;
+            font-size: 1.1rem;
+            font-weight: 500;
+            color: var(--text-main);
+            position: relative;
+        }
+
+        .answers-list input[type="radio"],
+        .answers-list input[type="checkbox"] {
+            margin-right: 15px;
+            transform: scale(1.5);
+            accent-color: var(--brand-primary);
+        }
+
+        .answers-list label:hover {
+            background: white;
+            border-color: #cbd5e1;
+            transform: translateX(6px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03);
+        }
+
+        /* Highlight selected label - JS helper needed usually for parent, 
+           but we can style the input itself to be prominent */
+
+        /* Hide Primefaces default styling if any interference */
+        .ui-selectoneradio label,
+        .ui-selectmanycheckbox label {
+            width: 100%;
+        }
+    </style>
+</h:head>
+
+<h:body styleClass="exam-body">
+    <h:form id="examForm">
+
+        <div class="exam-layout-grid">
+
+            <!-- SIDEBAR -->
+            <aside class="exam-sidebar">
+                <div class="candidat-profile">
+                    <div class="candidat-avatar">
+                        #{testBean.test.candidat.prenom.substring(0,1)}
+                    </div>
+                    <div class="candidat-info">
+                        <h4>#{testBean.test.candidat.prenom} #{testBean.test.candidat.nom}</h4>
+                        <span>Candidat</span>
+                    </div>
+                </div>
+
+                <div class="progression-header">
+                    <span>Progression</span>
+                    <span>#{testBean.indexQuestionCourante + 1} / #{testBean.nombreQuestions}</span>
+                </div>
+
+                <p:progressBar value="#{(testBean.indexQuestionCourante + 1) * 100 / testBean.nombreQuestions}"
+                    style="height: 8px; border-radius: 4px; background: #e2e8f0;" displayOnly="true" />
+
+                <div class="question-grid">
+                    <ui:repeat value="#{testBean.questions}" var="q" varStatus="status">
+                        <p:commandLink action="#{testBean.allerAQuestion(status.index)}" update="@form"
+                            styleClass="q-badge #{status.index == testBean.indexQuestionCourante ? 'active' : ''} #{testBean.reponsesSelectionnees[q.id] != null ? 'answered' : ''}"
+                            style="text-decoration: none; display: flex; align-items: center; justify-content: center; cursor: pointer;">
+                            #{status.index + 1}
+                        </p:commandLink>
+                    </ui:repeat>
+                </div>
+
+                <div style="margin-top: auto;">
+                    <p:commandButton value="Terminer l'examen" action="#{testBean.soumettreTest}"
+                        styleClass="btn-finish" style="width: 100%; border-radius: 12px; font-weight: 700;"
+                        icon="pi pi-check-circle"
+                        onclick="return confirm('Êtes-vous sûr de vouloir terminer le test ?');" />
+                </div>
+            </aside>
+
+            <!-- MAIN CONTENT -->
+            <main class="exam-main">
+
+                <!-- TIMER PILL -->
+                <div class="timer-pill" id="timerPill">
+                    <i class="fa-regular fa-clock timer-icon"></i>
+                    <span id="timerText">--:--</span>
+                </div>
+
+                <!-- QUESTION CARD -->
+                <div class="question-card animate-entry">
+                    <div class="question-header">
+                        <span class="question-number">Question #{testBean.numeroQuestion}</span>
+                        <h2 class="question-text">
+                            <h:outputText value="#{testBean.questionCourante.texte}" escape="false" />
+                        </h2>
+                    </div>
+
+                    <div class="answers-list">
+                        <!-- Single Choice -->
+                        <h:selectOneRadio value="#{testBean.reponseUnique}" layout="pageDirection"
+                            rendered="#{testBean.questionCourante.type == 'CHOIX_UNIQUE'}">
+                            <f:selectItems value="#{testBean.questionCourante.reponses}" var="rep"
+                                itemLabel="#{rep.texte}" itemValue="#{rep.id}" />
+                            <p:ajax process="@this" />
+                        </h:selectOneRadio>
+
+                        <!-- Multiple Choice -->
+                        <h:selectManyCheckbox value="#{testBean.reponsesCourantes}" layout="pageDirection"
+                            rendered="#{testBean.questionCourante.type == 'CHOIX_MULTIPLE'}">
+                            <f:selectItems value="#{testBean.questionCourante.reponses}" var="rep"
+                                itemLabel="#{rep.texte}" itemValue="#{rep.id}" />
+                            <p:ajax process="@this" />
+                        </h:selectManyCheckbox>
+                    </div>
+                </div>
+
+                <!-- FOOTER ACTIONS -->
+                <div class="exam-footer">
+                    <p:commandButton value="Précédent" action="#{testBean.questionPrecedente}" update="@form"
+                        styleClass="btn-nav btn-prev" icon="pi pi-arrow-left" iconPos="left"
+                        disabled="#{testBean.premiereQuestion}" />
+
+                    <p:commandButton value="#{testBean.derniereQuestion ? 'Terminer' : 'Suivant'}"
+                        action="#{testBean.questionSuivante}" update="@form" styleClass="btn-nav btn-next"
+                        icon="pi pi-arrow-right" iconPos="right" />
+                </div>
+
+                <!-- Poll pour surveiller le temps (1s) et déclencher soumission quand temps = 0 -->
+                <p:poll interval="1" listener="#{testBean.checkTempsAndSubmit}" update="@none" autoStart="true"
+                    stop="#{testBean.testTermine}" />
+
+            </main>
+
+        </div>
+
+    </h:form>
+
+    <!-- Timer Script with CDATA Protection -->
+    <script>
+        //<![CDATA[
+        let totalSeconds = #{ testBean.tempsRestant };
+
+        function updateTimer() {
+            if (totalSeconds > 0) totalSeconds--;
+
+            let m = Math.floor(totalSeconds / 60);
+            let s = totalSeconds % 60;
+
+            let display = (m < 10 ? "0" : "") + m + ":" + (s < 10 ? "0" : "") + s;
+
+            let el = document.getElementById('timerText');
+            if (el) el.innerText = display;
+
+            // Urgent visual warning
+            let pill = document.getElementById('timerPill');
+            if (totalSeconds < 60 && pill) {
+                pill.classList.add('urgent');
+            }
+        }
+
+        setInterval(updateTimer, 1000);
+        //]]>
+    </script>
+</h:body>
+
+</html>

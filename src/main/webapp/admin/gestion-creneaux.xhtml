@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:h="http://xmlns.jcp.org/jsf/html" xmlns:p="http://primefaces.org/ui"
+    xmlns:f="http://xmlns.jcp.org/jsf/core" xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
+<h:head>
+    <title>ISGA | Planning &amp; Créneaux</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <h:outputStylesheet library="css" name="styles.css" />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&amp;display=swap" rel="stylesheet" />
+    <style>
+        .p-datepicker {
+            border: none !important;
+            box-shadow: var(--shadow-soft) !important;
+        }
+
+        .time-picker input {
+            width: 100px !important;
+        }
+    </style>
+</h:head>
+<h:body>
+    <div class="admin-layout">
+        <!-- SIDEBAR -->
+        <div class="admin-sidebar">
+            <div class="admin-logo">
+                <div style="font-size: 2rem; margin-bottom: 0.5rem;">🚀</div>
+                <h2>ISGA</h2>
+                <span style="opacity: 0.6; font-size: 0.8rem; letter-spacing: 1px;">MANAGEMENT</span>
+            </div>
+            <h:form>
+                <p:menu style="width: 100%; border: none; background: transparent;">
+                    <p:menuitem value="Vue d'ensemble" icon="pi pi-th-large" outcome="dashboard" />
+                    <p:menuitem value="Banque de Questions" icon="pi pi-database" outcome="gestion-questions" />
+                    <p:menuitem value="Planning &amp; Créneaux" icon="pi pi-calendar" outcome="gestion-creneaux"
+                        styleClass="active-menu-item" />
+                    <p:menuitem value="Résultats &amp; Stats" icon="pi pi-chart-bar" outcome="recherche-resultats" />
+
+                    <p:separator style="background: rgba(255,255,255,0.1); margin: 1rem 0;" />
+                    <p:menuitem value="Déconnexion" icon="pi pi-power-off" action="#{adminBean.seDeconnecter}"
+                        style="color: #fda4af !important;" />
+                </p:menu>
+            </h:form>
+        </div>
+
+        <!-- MAIN CONTENT -->
+        <div class="admin-content">
+            <div class="page-header animate-entry">
+                <div>
+                    <h1 class="page-title">Planning &amp; Sessions</h1>
+                    <p style="color: var(--text-muted);">Programmez les examens et gérez la capacité.</p>
+                </div>
+                <div>
+                    <h:form>
+                        <p:commandButton value="Nouveau Créneau" icon="pi pi-plus"
+                            actionListener="#{adminBean.preparerCreationCreneau}" update=":newCreneauForm"
+                            oncomplete="PF('newCreneauDialog').show()" styleClass="btn-primary-lg"
+                            style="width: auto; padding: 0.8rem 1.5rem !important;" />
+                    </h:form>
+                </div>
+            </div>
+
+            <!-- TABLEAU DES CRÉNEAUX -->
+            <div class="card animate-entry" style="animation-delay: 0.1s;">
+                <h:form id="creneauxForm">
+                    <p:growl id="messages" showDetail="true" />
+
+                    <p:dataTable id="creneauxTable" value="#{adminBean.creneaux}" var="c"
+                        emptyMessage="Aucun créneau planifié." reflow="true" paginator="true" rows="10"
+                        rowStyleClass="#{c.actif ? '' : 'inactive-row'}" paginatorPosition="bottom">
+
+                        <p:column headerText="Date" sortBy="#{c.date}" width="150">
+                            <i class="pi pi-calendar" style="margin-right: 8px; opacity: 0.6;"></i>
+                            <h:outputText value="#{c.date}">
+                                <f:convertDateTime type="localDate" pattern="dd/MM/yyyy" />
+                            </h:outputText>
+                        </p:column>
+
+                        <p:column headerText="Horaire" width="150">
+                            <h:outputText value="#{c.heureDebut}" /> -
+                            <h:outputText value="#{c.heureFin}" />
+                        </p:column>
+
+                        <p:column headerText="Durée" width="100">
+                            #{c.dureeExamen} min
+                        </p:column>
+
+                        <p:column headerText="Capacité">
+                            <div style="display: flex; align-items: center; gap: 10px;">
+                                <p:progressBar value="#{((c.capaciteMax - c.placesRestantes) / c.capaciteMax) * 100}"
+                                    labelTemplate="{value}%" displayOnly="true" style="flex: 1; height: 10px;" />
+                                <span style="font-size: 0.9rem; white-space: nowrap;">
+                                    #{c.placesRestantes} libres
+                                </span>
+                            </div>
+                        </p:column>
+
+                        <p:column headerText="Statut" style="text-align: center; width: 100px;">
+                            <span class="status-badge #{c.actif ? 'status-active' : 'status-inactive'}">
+                                #{c.actif ? 'Actif' : 'Annulé'}
+                            </span>
+                        </p:column>
+
+                        <p:column width="120" style="text-align: center;">
+                            <p:commandButton icon="pi pi-pencil" action="#{adminBean.selectionnerCreneau(c)}"
+                                update=":editCreneauForm" oncomplete="PF('editCreneauDialog').show()"
+                                styleClass="p-button-rounded p-button-text p-button-warning" />
+                            <p:commandButton icon="pi pi-trash" action="#{adminBean.supprimerCreneau(c)}"
+                                update=":creneauxForm:creneauxTable :creneauxForm:messages"
+                                styleClass="p-button-rounded p-button-text p-button-danger">
+                                <p:confirm header="Confirmation" message="Supprimer ce créneau ?"
+                                    icon="pi pi-exclamation-triangle" />
+                            </p:commandButton>
+                        </p:column>
+                    </p:dataTable>
+                </h:form>
+            </div>
+
+            <!-- DIALOG: NOUVEAU CRÉNEAU -->
+            <p:dialog id="newCreneauDialog" widgetVar="newCreneauDialog" header="Nouveau Créneau" modal="true"
+                width="500" responsive="true" showEffect="fade" hideEffect="fade">
+                <h:form id="newCreneauForm">
+                    <div class="p-fluid">
+                        <div class="p-field" style="margin-bottom: 1rem;">
+                            <label for="newDate">Date *</label>
+                            <p:datePicker id="newDate" value="#{adminBean.nouveauCreneau.date}" required="true"
+                                showIcon="true" pattern="dd/MM/yyyy" mindate="today">
+                                <f:convertDateTime type="localDate" pattern="dd/MM/yyyy" />
+                            </p:datePicker>
+                        </div>
+
+                        <div style="display: flex; gap: 1rem;">
+                            <div class="p-field" style="flex: 1; margin-bottom: 1rem;">
+                                <label for="newDebut">Début *</label>
+                                <p:datePicker id="newDebut" value="#{adminBean.nouveauCreneau.heureDebut}"
+                                    required="true" timeOnly="true" pattern="HH:mm" stepMinute="15">
+                                    <f:convertDateTime type="localTime" pattern="HH:mm" />
+                                </p:datePicker>
+                            </div>
+                            <div class="p-field" style="flex: 1; margin-bottom: 1rem;">
+                                <label for="newFin">Fin *</label>
+                                <p:datePicker id="newFin" value="#{adminBean.nouveauCreneau.heureFin}" required="true"
+                                    timeOnly="true" pattern="HH:mm" stepMinute="15">
+                                    <f:convertDateTime type="localTime" pattern="HH:mm" />
+                                </p:datePicker>
+                            </div>
+                        </div>
+
+                        <div style="display: flex; gap: 1rem;">
+                            <div class="p-field" style="flex: 1; margin-bottom: 1rem;">
+                                <label for="newDuree">Durée (min) *</label>
+                                <p:inputNumber id="newDuree" value="#{adminBean.nouveauCreneau.dureeExamen}"
+                                    required="true" minValue="30" decimalPlaces="0" />
+                            </div>
+                            <div class="p-field" style="flex: 1; margin-bottom: 1rem;">
+                                <label for="newCapacite">Capacité *</label>
+                                <p:inputNumber id="newCapacite" value="#{adminBean.nouveauCreneau.capaciteMax}"
+                                    required="true" minValue="1" decimalPlaces="0" />
+                            </div>
+                        </div>
+                    </div>
+
+                    <div style="text-align: right; margin-top: 1.5rem;">
+                        <p:commandButton value="Annuler" icon="pi pi-times"
+                            onclick="PF('newCreneauDialog').hide(); return false;" type="button"
+                            styleClass="p-button-text" style="margin-right: 10px;" />
+                        <p:commandButton value="Créer" icon="pi pi-check" action="#{adminBean.ajouterCreneau}"
+                            update=":creneauxForm:creneauxTable :creneauxForm:messages"
+                            oncomplete="if (args &amp;&amp; !args.validationFailed) PF('newCreneauDialog').hide();"
+                            styleClass="p-button-success" />
+                    </div>
+                </h:form>
+            </p:dialog>
+
+            <!-- DIALOG: ÉDITER CRÉNEAU -->
+            <p:dialog id="editCreneauDialog" widgetVar="editCreneauDialog" header="Modifier Créneau" modal="true"
+                width="500" responsive="true" showEffect="fade" hideEffect="fade">
+                <h:form id="editCreneauForm">
+                    <div class="p-fluid">
+                        <div class="p-field" style="margin-bottom: 1rem;">
+                            <label for="editDate">Date *</label>
+                            <p:datePicker id="editDate" value="#{adminBean.creneauSelectionne.date}" required="true"
+                                showIcon="true" pattern="dd/MM/yyyy">
+                                <f:convertDateTime type="localDate" pattern="dd/MM/yyyy" />
+                            </p:datePicker>
+                        </div>
+
+                        <div style="display: flex; gap: 1rem;">
+                            <div class="p-field" style="flex: 1; margin-bottom: 1rem;">
+                                <label for="editDebut">Début *</label>
+                                <p:datePicker id="editDebut" value="#{adminBean.creneauSelectionne.heureDebut}"
+                                    required="true" timeOnly="true" pattern="HH:mm" stepMinute="15">
+                                    <f:convertDateTime type="localTime" pattern="HH:mm" />
+                                </p:datePicker>
+                            </div>
+                            <div class="p-field" style="flex: 1; margin-bottom: 1rem;">
+                                <label for="editFin">Fin *</label>
+                                <p:datePicker id="editFin" value="#{adminBean.creneauSelectionne.heureFin}"
+                                    required="true" timeOnly="true" pattern="HH:mm" stepMinute="15">
+                                    <f:convertDateTime type="localTime" pattern="HH:mm" />
+                                </p:datePicker>
+                            </div>
+                        </div>
+
+                        <div style="display: flex; gap: 1rem;">
+                            <div class="p-field" style="flex: 1; margin-bottom: 1rem;">
+                                <label for="editDuree">Durée (min) *</label>
+                                <p:inputNumber id="editDuree" value="#{adminBean.creneauSelectionne.dureeExamen}"
+                                    required="true" minValue="30" decimalPlaces="0" />
+                            </div>
+                            <div class="p-field" style="flex: 1; margin-bottom: 1rem;">
+                                <label for="editCapacite">Capacité *</label>
+                                <p:inputNumber id="editCapacite" value="#{adminBean.creneauSelectionne.capaciteMax}"
+                                    required="true" minValue="1" decimalPlaces="0" />
+                            </div>
+                        </div>
+
+                        <div class="p-field" style="margin-bottom: 1rem; display: flex; align-items: center;">
+                            <label for="editActif" style="margin-right: 10px;">Statut Actif</label>
+                            <p:toggleSwitch id="editActif" value="#{adminBean.creneauSelectionne.actif}" />
+                        </div>
+                    </div>
+
+                    <div style="text-align: right; margin-top: 1.5rem;">
+                        <p:commandButton value="Annuler" icon="pi pi-times"
+                            onclick="PF('editCreneauDialog').hide(); return false;" type="button"
+                            styleClass="p-button-text" style="margin-right: 10px;" />
+                        <p:commandButton value="Enregistrer" icon="pi pi-save" action="#{adminBean.modifierCreneau}"
+                            update=":creneauxForm:creneauxTable :creneauxForm:messages"
+                            oncomplete="if (args &amp;&amp; !args.validationFailed) PF('editCreneauDialog').hide();"
+                            styleClass="p-button-success" />
+                    </div>
+                </h:form>
+            </p:dialog>
+
+            <!-- CONFIRM DIALOG -->
+            <p:confirmDialog global="true" showEffect="fade" hideEffect="fade" responsive="true" width="350">
+                <p:commandButton value="Non" type="button" styleClass="ui-confirmdialog-no p-button-text" />
+                <p:commandButton value="Oui" type="button" styleClass="ui-confirmdialog-yes p-button-danger" />
+            </p:confirmDialog>
+        </div>
+    </div>
+</h:body>
+
+</html>
