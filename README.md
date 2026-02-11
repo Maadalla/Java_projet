@@ -8,6 +8,17 @@
 
 ---
 
+## Vidéo du projet
+
+
+Voici une démonstration de notre projet :
+
+
+
+https://github.com/user-attachments/assets/81e27d4c-30da-4d25-906b-7744abf32e97
+
+---
+
 ## 🚀 Fonctionnalités Clés
 
 ### 👨‍🎓 Espace Candidat
@@ -87,17 +98,6 @@ Une fois que vous voyez `Deployed 1/1` dans la console, l'application est prête
 
 ---
 
-## Vidéo du projet
-
-
-Voici une démonstration de notre projet :
-
-
-
-https://github.com/user-attachments/assets/81e27d4c-30da-4d25-906b-7744abf32e97
-
-
----
 
 ## 📝 Auteurs
 
