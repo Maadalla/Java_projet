@@ -92,7 +92,7 @@ Une fois que vous voyez `Deployed 1/1` dans la console, l'application est prête
 
 Voici une démonstration de notre projet :
 
-[![Regarder la vidéo](https://img.youtube.com/vi/pvDItfre9Sg/hqdefault.jpg)](https://www.youtube.com/watch?v=pvDItfre9Sg)
+[▶️ Regarder la vidéo](./projet_video.mp4) 
 
 ---
 
