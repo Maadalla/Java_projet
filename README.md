@@ -87,14 +87,16 @@ Une fois que vous voyez `Deployed 1/1` dans la console, l'application est prête
 
 ---
 
-## �️ Vidéo du projet
+## Vidéo du projet
+
 
 Voici une démonstration de notre projet :
-- `projet_video.mp4` 
+
+[▶️ Regarder la vidéo](./projet_video.mp4) 
 
 ---
 
-## �📝 Auteurs
+## 📝 Auteurs
 
 - Mohamed Maadalla
 - Driss Bouajaja
